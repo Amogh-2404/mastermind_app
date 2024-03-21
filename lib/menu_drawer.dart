@@ -11,14 +11,14 @@ class MenuDrawer extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          DrawerHeader(
+          const DrawerHeader(
             decoration: BoxDecoration(
-              color: Theme.of(context).appBarTheme.backgroundColor,
+              color: Colors.blue,
             ),
             child: Text(
               'Mastermind',
               style: TextStyle(
-                color: Theme.of(context).appBarTheme.foregroundColor,
+                color: Colors.white,
                 fontSize: 24,
               ),
             ),
@@ -30,7 +30,6 @@ class MenuDrawer extends StatelessWidget {
 
             onTap: () {
               Navigator.pop(context); // Close the drawer
-              Navigator.pushNamed(context, '/');
               // Additional actions can be added here for navigation
             },
           ),

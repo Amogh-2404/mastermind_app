@@ -489,9 +489,9 @@ class MastermindGame extends StatefulWidget {
 
 class _MastermindGameState extends State<MastermindGame> {
   late Future<List<List<int>>> simulatedGuesses;
-  bool isLoading = true;
   late List<int> solution;  // To store the secret code
   int itemsToShow = 0;
+  bool isLoading = true ;
 
   @override
   void initState() {

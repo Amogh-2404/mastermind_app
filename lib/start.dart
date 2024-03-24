@@ -41,6 +41,9 @@ class StartDart {
         fitnessList.add(gameHelper.calculateFitness(totalDist));
       }
 
+
+      await Future.delayed(Duration.zero);
+
       List<List<dynamic>> populationWithFitness = List.generate(population.length, (index) => [fitnessList[index], population[index]]);
       populationWithFitness.sort((a, b) => b[0].compareTo(a[0]));
 
@@ -54,6 +57,8 @@ class StartDart {
       if (gameHelper.hint(guessList.last, newGameData.secretCode, newGameData.codeLength, newGameData.numColors)[0] == newGameData.codeLength) {
         break;
       }
+
+      await Future.delayed(Duration.zero);
 
       population = populationWithFitness.map((e) => List<int>.from(e[1])).toList();
 
@@ -114,7 +119,7 @@ class StartDart {
 
     }
 
-    await Future.delayed(Duration(seconds: 5), () => print('Finished'));
+    await Future.delayed(Duration(seconds: 1), () => print('Finished'));
     print(guessList);
     return guessList;
   }

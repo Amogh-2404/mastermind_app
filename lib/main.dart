@@ -348,6 +348,7 @@
 //
 
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'start.dart';
 import 'menu_drawer.dart';
@@ -408,57 +409,140 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Game Settings")),
+        appBar: AppBar(title: Text("Game Settings",style: TextStyle(color: Colors.blue),)),
     body: Padding(
     padding: const EdgeInsets.all(16.0),
     child: Form(
     key: _formKey,
     child: ListView(
     children: [
-    TextFormField(
-    decoration: InputDecoration(labelText: 'Number of Colors'),
-    initialValue: numColors.toString(),
-    keyboardType: TextInputType.number,
-    onSaved: (value) => numColors = int.parse(value ?? '6'),
-    ),
-    TextFormField(
-    decoration: InputDecoration(labelText: 'Code Length'),
-    initialValue: codeLength.toString(),
-    keyboardType: TextInputType.number,
-    onSaved: (value) => codeLength = int.parse(value ?? '4'),
-    ),
-    TextFormField(
-    decoration: InputDecoration(labelText: 'Population Size'),
-    initialValue: populationSize.toString(),
+    Container(
+    margin: MediaQuery.of(context).size.width < 800 ? const EdgeInsets.symmetric(vertical: 10.0) : const EdgeInsets.symmetric(vertical: 10.0,horizontal: 300.0),
+      child: TextFormField(
+      decoration: InputDecoration(labelText: 'Number of Colors',focusColor: Colors.blue,hoverColor: Colors.grey.shade600,fillColor: Colors.blue,
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue, width: 2.0), // Change the color and width as needed
+          borderRadius: BorderRadius.circular(30.0), // Pill-shaped border
+        ),
+        // Define the border style when the field is not focused
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey, width: 1.0), // Normal border style
+          borderRadius: BorderRadius.circular(30.0), // Pill-shaped border
+        ),
+        contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 15.0),
+        // Add padding to the input field
+
+        floatingLabelStyle: TextStyle(
+          color: Colors.blue,  // Color of the label when the field is focused
+        ),
+      ),
+      initialValue: numColors.toString(),
       keyboardType: TextInputType.number,
-      onSaved: (value) => populationSize = int.parse(value ?? '100'),
+      onSaved: (value) => numColors = int.parse(value ?? '6'),
+
+
+      ),
     ),
-      TextFormField(
-        decoration: InputDecoration(labelText: 'Number of Generations'),
-        initialValue: numGenerations.toString(),
+
+    Container(
+      margin: MediaQuery.of(context).size.width < 800 ? const EdgeInsets.symmetric(vertical: 10.0) : const EdgeInsets.symmetric(vertical: 10.0,horizontal: 300.0),
+      child: TextFormField(
+      decoration: InputDecoration(labelText: 'Code Length',focusColor: Colors.blue,hoverColor: Colors.grey.shade600,fillColor: Colors.blue,
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue, width: 2.0), // Change the color and width as needed
+          borderRadius: BorderRadius.circular(30.0), // Pill-shaped border
+        ),
+        // Define the border style when the field is not focused
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey, width: 1.0), // Normal border style
+          borderRadius: BorderRadius.circular(30.0), // Pill-shaped border
+        ),
+        contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 15.0), // Add padding to the input field
+        floatingLabelStyle: TextStyle(
+          color: Colors.blue,  // Color of the label when the field is focused
+        ),
+         ),
+      initialValue: codeLength.toString(),
+      keyboardType: TextInputType.number,
+      onSaved: (value) => codeLength = int.parse(value ?? '4'),
+      ),
+    ),
+    Container(
+
+      margin: MediaQuery.of(context).size.width < 800 ? const EdgeInsets.symmetric(vertical: 10.0) : const EdgeInsets.symmetric(vertical: 10.0,horizontal: 300.0),
+      child: TextFormField(
+      decoration: InputDecoration(labelText: 'Population Size',focusColor:Colors.blue,hoverColor: Colors.grey.shade600,fillColor: Colors.blue
+      ,focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue, width: 2.0), // Change the color and width as needed
+          borderRadius: BorderRadius.circular(30.0), // Pill-shaped border
+        ),
+        // Define the border style when the field is not focused
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey, width: 1.0), // Normal border style
+          borderRadius: BorderRadius.circular(30.0), // Pill-shaped border
+        ),
+        contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 15.0), // Add padding to the input field
+        floatingLabelStyle: TextStyle(
+          color: Colors.blue,  // Color of the label when the field is focused
+        ),
+         ),
+      initialValue: populationSize.toString(),
         keyboardType: TextInputType.number,
-        onSaved: (value) => numGenerations = int.parse(value ?? '500'),
+        onSaved: (value) => populationSize = int.parse(value ?? '100'),
+      ),
+    ),
+      Container(
+        margin: MediaQuery.of(context).size.width < 800 ? const EdgeInsets.symmetric(vertical: 10.0) : const EdgeInsets.symmetric(vertical: 10.0,horizontal: 300.0),
+        child: TextFormField(
+          decoration: InputDecoration(labelText: 'Number of Generations',focusColor: Colors.blue,hoverColor: Colors.grey.shade600,fillColor:Colors.blue,
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.blue, width: 2.0), // Change the color and width as needed
+              borderRadius: BorderRadius.circular(30.0), // Pill-shaped border
+
+            ),
+            // Define the border style when the field is not focused
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey, width: 1.0), // Normal border style
+              borderRadius: BorderRadius.circular(30.0), // Pill-shaped border
+            ),
+            contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 15.0), // Add padding to the input field
+            floatingLabelStyle: TextStyle(
+              color: Colors.blue,  // Color of the label when the field is focused
+            ),
+          ),
+          initialValue: numGenerations.toString(),
+          keyboardType: TextInputType.number,
+          onSaved: (value) => numGenerations = int.parse(value ?? '500'),
+        ),
       ),
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 20.0),
-        child: ElevatedButton(
-          onPressed: () {
-            if (_formKey.currentState!.validate()) {
-              _formKey.currentState!.save();
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MastermindGame(
-                    numColors: numColors,
-                    codeLength: codeLength,
-                    populationSize: populationSize,
-                    numGenerations: numGenerations,
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 10.0),
+          child: ElevatedButton(
+              style:ElevatedButton.styleFrom(
+                shape: CircleBorder(),
+                backgroundColor: Colors.blue,
+                padding: EdgeInsets.all(20), // Background color of the button
+              ),
+            onPressed: () {
+              if (_formKey.currentState!.validate()) {
+                _formKey.currentState!.save();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MastermindGame(
+                      numColors: numColors,
+                      codeLength: codeLength,
+                      populationSize: populationSize,
+                      numGenerations: numGenerations,
+                    ),
                   ),
-                ),
-              );
-            }
-          },
-          child: Text('Start Game'),
+                );
+              }
+            },
+            child: Icon(Icons.play_arrow,color: Colors.white,size: 50,),
+          ),
         ),
       ),
     ],
@@ -541,11 +625,17 @@ class _MastermindGameState extends State<MastermindGame> {
     );
   }
 
+  void resetGame() {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (_) => SettingsScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mastermind Game'),
+        title: const Text('Mastermind Game',style: TextStyle(color:Colors.blue)),
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator(color:Colors.blue))
@@ -596,6 +686,17 @@ class _MastermindGameState extends State<MastermindGame> {
             ),
           ),
 
+          Container(
+            margin:(const EdgeInsets.fromLTRB(5, 3, 5, 200)),
+            child:ElevatedButton(
+            onPressed: resetGame,
+            child: Icon(Icons.refresh,color: Colors.white,size: 50,),
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+              padding: MaterialStateProperty.all<EdgeInsetsGeometry>(const EdgeInsets.all(10)),
+            ),
+          ),
+          ),
         ],
       ),
     );

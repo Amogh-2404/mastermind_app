@@ -7,6 +7,7 @@ class StartDart {
   late GameData newGameData;
   late GameHelper gameHelper;
 
+
   StartDart({
     required int numColors,
     required int codeLength,
@@ -113,7 +114,8 @@ class StartDart {
 
     }
 
-
+    await Future.delayed(Duration(seconds: 5), () => print('Finished'));
+    print(guessList);
     return guessList;
   }
 }

@@ -491,6 +491,7 @@ class _MastermindGameState extends State<MastermindGame> {
   late Future<List<List<int>>> simulatedGuesses;
   bool isLoading = true;
   late List<int> solution;  // To store the secret code
+  int itemsToShow = 0;
 
   @override
   void initState() {
@@ -505,8 +506,21 @@ class _MastermindGameState extends State<MastermindGame> {
       setState(() {
         isLoading = false;
         solution = startDart.newGameData.secretCode;
+        print(solution);
       });
     });
+
+    // Timer.periodic(Duration(seconds: 1), (Timer timer) {
+    //   if (!isLoading) {
+    //     setState(() {
+    //       if (itemsToShow < solution.length) {
+    //         itemsToShow++;
+    //       } else {
+    //         timer.cancel(); // Stop the timer when all items are displayed.
+    //       }
+    //     });
+    //   }
+    // });
   }
 
   Color _getColor(int number) {
@@ -547,31 +561,41 @@ class _MastermindGameState extends State<MastermindGame> {
           Expanded(
             child: FutureBuilder<List<List<int>>>(
               future: simulatedGuesses,
-
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.hasData) {
-                    List<List<int>> guesses = snapshot.data!;
-                    return ListView.builder(
-                      itemCount: guesses.length,
-                      itemBuilder: (context, index) {
-
+                if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                  List<List<int>> guesses = snapshot.data!;
+                  Timer.periodic(Duration(seconds: 1), (Timer timer) {
+                    if (itemsToShow < guesses.length) {
+                      setState(() {
+                        itemsToShow++;
+                      });
+                    } else {
+                      timer.cancel(); // Stop the timer when all items are displayed.
+                    }
+                  });
+                  return ListView.builder(
+                    itemCount: itemsToShow,
+                    itemBuilder: (context, index) {
+                      if (index < guesses.length) {
+                        List<int> currentGuess = guesses[index];
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: guesses[index]
-                              .map((number) => _buildColorCircle(_getColor(number)))
-                              .toList(),
+                          children: currentGuess.map((number) => _buildColorCircle(_getColor(number))).toList(),
                         );
-                      },
-                    );
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  }
+                      } else {
+                        return const SizedBox.shrink();
+                      }
+                    },
+                  );
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
                 }
+                // Show a placeholder or loading indicator while waiting for the data
                 return const Text('Awaiting result...');
               },
             ),
           ),
+
         ],
       ),
     );

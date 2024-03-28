@@ -12,9 +12,10 @@ class StartDart {
     required int codeLength,
     required int populationSize,
     required int numGenerations,
+    required List<int> secretCode,
   }) {
     gameHelper = GameHelper();
-    List<int> secretCode = gameHelper.generateRandomCode(numColors, codeLength);
+    // List<int> secretCode = gameHelper.generateRandomCode(numColors, codeLength);
     newGameData = GameData(numColors, populationSize, codeLength, secretCode, numGenerations, 0.1);
   }
 

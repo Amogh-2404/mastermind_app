@@ -572,7 +572,7 @@ class MastermindGame extends StatefulWidget {
 }
 
 class _MastermindGameState extends State<MastermindGame> {
-  late Future<List<List<int>>> simulatedGuesses;
+  late Future<List<List<List<int>>>> simulatedGuesses;
   late List<int> solution;  // To store the secret code
   int itemsToShow = 0;
   bool isLoading = true ;
@@ -649,11 +649,11 @@ class _MastermindGameState extends State<MastermindGame> {
             ),
           ),
           Expanded(
-            child: FutureBuilder<List<List<int>>>(
+            child: FutureBuilder<List<List<List<int>>>>(
               future: simulatedGuesses,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
-                  List<List<int>> guesses = snapshot.data!;
+                  List<List<List<int>>> guesses = snapshot.data!.cast<List<List<int>>>();
                   Timer.periodic(Duration(seconds: 1), (Timer timer) {
                     if (itemsToShow < guesses.length) {
                       setState(() {
@@ -667,10 +667,17 @@ class _MastermindGameState extends State<MastermindGame> {
                     itemCount: itemsToShow,
                     itemBuilder: (context, index) {
                       if (index < guesses.length) {
-                        List<int> currentGuess = guesses[index];
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: currentGuess.map((number) => _buildColorCircle(_getColor(number))).toList(),
+                        List<int> currentGuess = guesses[index][1];
+                        List<int> hint = guesses[index][0];
+                        return Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: currentGuess.map((number) => _buildColorCircle(_getColor(number))).toList(),
+                            ),
+                            Text("${hint[0]} black, ${hint[1]} white", style: TextStyle(color: Colors.blue)),
+                            SizedBox(height: 10)
+                          ],
                         );
                       } else {
                         return const SizedBox.shrink();

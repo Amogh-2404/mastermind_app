@@ -24,10 +24,12 @@ class StartDart {
     List<int> temp = gameHelper.generateRandomCode(newGameData.numColors, newGameData.codeLength);
     List<List<List<int>>> guessList = [[gameHelper.hint(temp, newGameData.secretCode, newGameData.codeLength, newGameData.numColors), temp]];
 
+    var countHyperMutation = 0;
     for (int generation = 0; generation < newGameData.numGenerations; generation++) {
-      if (generation % 15 == 0) {
+      if (countHyperMutation == 15) {
         population = List.generate(
             newGameData.populationSize, (_) => gameHelper.generateRandomCode(newGameData.numColors, newGameData.codeLength));
+        countHyperMutation = 0;
       }
 
       List<int> fitnessList = [];
@@ -49,7 +51,8 @@ class StartDart {
         var newGuess = List<int>.from(populationWithFitness.first[1]);
         var newHint = gameHelper.hint(newGuess, newGameData.secretCode, newGameData.codeLength, newGameData.numColors);
         guessList.add([newHint, newGuess]);
-      }
+        countHyperMutation = 0;
+      }else{countHyperMutation+=1;}
 
       if (gameHelper.hint(guessList.last.last, newGameData.secretCode, newGameData.codeLength, newGameData.numColors)[0] == newGameData.codeLength) {
         break;
@@ -104,7 +107,7 @@ class StartDart {
       }
 
       List<List<int>> mutatePopulationList = mutatePopulation.map((e) => gameHelper.circularMutate(e)).toList();
-      population = [...transpositionPopulationList, ...crossoverPopulationList, ...mutatePopulationList];
+      population += [...transpositionPopulationList, ...crossoverPopulationList, ...mutatePopulationList];
 
     }
 

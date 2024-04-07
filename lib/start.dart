@@ -33,18 +33,22 @@ class StartDart {
         countHypermutation = 0;
       }
 
-      print(guessList);
 
       List<int> fitnessList = [];
       for (var individual in population) {
-        int totalDist = guessList.fold(0, (sum, guess) {
-          print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
-          print(guess.last);
-          var h = gameHelper.hint(individual, guess.last, newGameData.codeLength, newGameData.numColors);
-          var hi = gameHelper.hint(guess.last, newGameData.secretCode, newGameData.codeLength, newGameData.numColors);
-          return sum + gameHelper.distance(h, hi);
-        });
-        fitnessList.add(gameHelper.calculateFitness(totalDist));
+        var totalDistance = 0;
+        for (var g in guessList){
+          var h = gameHelper.hint(individual, g.last, newGameData.codeLength, newGameData.numColors);
+          var h_i = gameHelper.hint(g.last, newGameData.secretCode, newGameData.codeLength, newGameData.numColors);
+          totalDistance += gameHelper.distance(h, h_i);
+        }
+        fitnessList.add(gameHelper.calculateFitness(totalDistance));
+        // int totalDist = guessList.fold(0, (sum, guess) {
+        //   var h = gameHelper.hint(individual, guess.last, newGameData.codeLength, newGameData.numColors);
+        //   var hi = gameHelper.hint(guess.last, newGameData.secretCode, newGameData.codeLength, newGameData.numColors);
+        //   return sum + gameHelper.distance(h, hi);
+        // });
+        // fitnessList.add(gameHelper.calculateFitness(totalDist));
       }
 
       await Future.delayed(Duration.zero);

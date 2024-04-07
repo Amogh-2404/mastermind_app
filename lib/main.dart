@@ -348,8 +348,10 @@
 //
 
 import 'dart:async';
+import 'dart:html';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'start.dart';
 import 'menu_drawer.dart';
 
@@ -403,19 +405,33 @@ class SettingsScreen extends StatefulWidget {
 
 //Colors.red, Colors.green, Colors.blue, Colors.yellow, Colors.purple, Colors.orange, Colors.cyan, Colors.pink, Colors.teal, Colors.indigo
 
+Map<ColorChoice, Color> globalColorMap = {
+  ColorChoice.red: Colors.red,
+  ColorChoice.green: Colors.green,
+  ColorChoice.blue: Colors.blue,
+  ColorChoice.yellow: Colors.yellow,
+  ColorChoice.purple: Colors.purple,
+  ColorChoice.orange: Colors.orange,
+  ColorChoice.cyan: Colors.cyan,
+  ColorChoice.pink: Colors.pink,
+  ColorChoice.teal: Colors.teal,
+  ColorChoice.indigo: Colors.indigo,
+};
 class _SettingsScreenState extends State<SettingsScreen> {
   final _formKey = GlobalKey<FormState>();
   int numColors = 6;
   int codeLength = 4;
-  int populationSize = 100;
-  int numGenerations = 500;
+  int populationSize = 10;
+  int numGenerations = 5000;
   List<ColorChoice?> selectedColors = [];
   ColorChoice? selectedColor;
+  late Map<ColorChoice, Color> colorMapReduced;
 
   @override
   void initState() {
     super.initState();
     selectedColors = List<ColorChoice?>.filled(codeLength, null);
+    colorMapReduced = Map.fromEntries(globalColorMap.entries.take(6));
   }
 
   Map<ColorChoice, Color> colorMap = {
@@ -430,6 +446,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     ColorChoice.teal: Colors.teal,
     ColorChoice.indigo: Colors.indigo,
   };
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -463,7 +481,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       initialValue: numColors.toString(),
       keyboardType: TextInputType.number,
-      onSaved: (value) => numColors = int.parse(value ?? '6'),
+      onSaved: (value){
+        numColors = int.parse(value ?? '6');
+        setState(() {
+          colorMapReduced = Map.fromEntries(colorMap.entries.take(numColors));
+        });
+        },
+        onChanged: (value){
+          numColors = int.parse(value ?? '6');
+          setState(() {
+            colorMapReduced = Map.fromEntries(colorMap.entries.take(numColors));
+          });
+        },
 
 
       ),
@@ -527,7 +556,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
          ),
       initialValue: populationSize.toString(),
         keyboardType: TextInputType.number,
-        onSaved: (value) => populationSize = int.parse(value ?? '100'),
+        onSaved: (value){
+        setState(() {
+          populationSize = int.parse(value ?? '10');
+        });
+      },
+        onChanged:(value) {
+          setState(() {
+            populationSize = int.parse(value ?? '10');
+          });
+        },
       ),
     ),
       Container(
@@ -551,32 +589,37 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           initialValue: numGenerations.toString(),
           keyboardType: TextInputType.number,
-          onSaved: (value) => numGenerations = int.parse(value ?? '500'),
+          onSaved: (value) => numGenerations = int.parse(value ?? '5000'),
         ),
       ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Wrap(
-            spacing: 8.0,
+      Center(
+        child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child:Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Wrap(
+              spacing: 8.0,
 
-            children: colorMap.keys.map((color) {
-              return GestureDetector(
-                onTap: () => setState(() {
-                  selectedColor = color;
-                }),
-                child: Container(
-                  width: 30,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    color: colorMap[color],
-                    shape: BoxShape.circle,
+              children: colorMapReduced.keys.map((color) {
+                return GestureDetector(
+                  onTap: () => setState(() {
+                    selectedColor = color;
+                  }),
+                  child: Container(
+                    width: 30,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      color: colorMap[color],
+                      shape: BoxShape.circle,
+                    ),
                   ),
-                ),
-              );
-            }).toList(),
-          ),
-        ],
+                );
+              }).toList(),
+            ),
+          ],
+        )
+            ),
       ),
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -584,8 +627,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           return GestureDetector(
             onTap: () {setState(() {
               if (selectedColor != null) {
-                print("HELL YEAH!!!!");
-                print(selectedColor);
+                // print("HELL YEAH!!!!");
+                print("The secret color is ${selectedColor}");
                 selectedColors[entry.key] = selectedColor;
               }
             });},
@@ -614,7 +657,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onPressed: () {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
-                print(selectedColors);
+                // print(selectedColors);
                 if (selectedColors.any((color) => color == null)) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -624,6 +667,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   return;
                 }
                 List<int> secretCode = selectedColors.map((color) => colorMap.keys.toList().indexOf(color!)).toList();
+                // print(secretCode);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -690,7 +734,7 @@ class _MastermindGameState extends State<MastermindGame> {
       setState(() {
         isLoading = false;
         solution = startDart.newGameData.secretCode;
-        print(solution);
+        // print(solution);
       });
     });
 

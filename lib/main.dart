@@ -351,6 +351,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'start.dart';
+import 'package:zoom_widget/zoom_widget.dart';
 import 'menu_drawer.dart';
 
 void main() => runApp(MastermindApp());
@@ -387,7 +388,7 @@ class _SplashScreenState extends State<SplashScreen> {
       child: Center(
         child: Text(
           'Mastermind',
-          style: TextStyle(fontSize: 24, color: Colors.white),
+          style: TextStyle(fontSize: 35, color: Colors.white),
         ),
       ),
     );
@@ -409,15 +410,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Game Settings",style: TextStyle(color: Colors.blue),)),
+        appBar: AppBar(title: Text("Game Settings",style: TextStyle(color: Colors.blue,fontSize: MediaQuery.of(context).size.width>1000?20:15))),
     body: Padding(
-    padding: const EdgeInsets.all(16.0),
+    padding:MediaQuery.of(context).size.width < 800 ?const EdgeInsets.all(16.0):const EdgeInsets.all(8.0) ,
     child: Form(
     key: _formKey,
     child: ListView(
     children: [
     Container(
-    margin: MediaQuery.of(context).size.width < 800 ? const EdgeInsets.symmetric(vertical: 10.0) : const EdgeInsets.symmetric(vertical: 10.0,horizontal: 300.0),
+    margin: MediaQuery.of(context).size.width < 800 ? const EdgeInsets.symmetric(vertical: 10.0) : const EdgeInsets.symmetric(vertical: 10.0,horizontal: 600.0),
       child: TextFormField(
       decoration: InputDecoration(labelText: 'Number of Colors',focusColor: Colors.blue,hoverColor: Colors.grey.shade600,fillColor: Colors.blue,
         focusedBorder: OutlineInputBorder(
@@ -445,7 +446,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     ),
 
     Container(
-      margin: MediaQuery.of(context).size.width < 800 ? const EdgeInsets.symmetric(vertical: 10.0) : const EdgeInsets.symmetric(vertical: 10.0,horizontal: 300.0),
+      margin: MediaQuery.of(context).size.width < 800 ? const EdgeInsets.symmetric(vertical: 10.0) : const EdgeInsets.symmetric(vertical: 10.0,horizontal: 600.0),
       child: TextFormField(
       decoration: InputDecoration(labelText: 'Code Length',focusColor: Colors.blue,hoverColor: Colors.grey.shade600,fillColor: Colors.blue,
         focusedBorder: OutlineInputBorder(
@@ -469,7 +470,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     ),
     Container(
 
-      margin: MediaQuery.of(context).size.width < 800 ? const EdgeInsets.symmetric(vertical: 10.0) : const EdgeInsets.symmetric(vertical: 10.0,horizontal: 300.0),
+      margin: MediaQuery.of(context).size.width < 800 ? const EdgeInsets.symmetric(vertical: 10.0) : const EdgeInsets.symmetric(vertical: 10.0,horizontal: 600.0),
       child: TextFormField(
       decoration: InputDecoration(labelText: 'Population Size',focusColor:Colors.blue,hoverColor: Colors.grey.shade600,fillColor: Colors.blue
       ,focusedBorder: OutlineInputBorder(
@@ -492,7 +493,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
     ),
       Container(
-        margin: MediaQuery.of(context).size.width < 800 ? const EdgeInsets.symmetric(vertical: 10.0) : const EdgeInsets.symmetric(vertical: 10.0,horizontal: 300.0),
+        margin: MediaQuery.of(context).size.width < 800 ? const EdgeInsets.symmetric(vertical: 10.0) : const EdgeInsets.symmetric(vertical: 10.0,horizontal: 600.0),
         child: TextFormField(
           decoration: InputDecoration(labelText: 'Number of Generations',focusColor: Colors.blue,hoverColor: Colors.grey.shade600,fillColor:Colors.blue,
             focusedBorder: OutlineInputBorder(
@@ -614,14 +615,14 @@ class _MastermindGameState extends State<MastermindGame> {
 
   Widget _buildColorCircle(Color color, {bool isSecret = false}) {
     return Container(
-      margin: const EdgeInsets.all(4),
+      margin: MediaQuery.of(context).size.width>1000?const EdgeInsets.all(6):const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: isSecret ? Colors.transparent : color,
         border: isSecret ? Border.all(color: color, width: 3.0) : null,
         shape: BoxShape.circle,
       ),
-      width: 25,
-      height: 25,
+      width: MediaQuery.of(context).size.width>1000? 50:25 ,
+      height: MediaQuery.of(context).size.width>1000? 50:25,
     );
   }
 
@@ -642,10 +643,14 @@ class _MastermindGameState extends State<MastermindGame> {
           : Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: solution.map((number) => _buildColorCircle(_getColor(number), isSecret: true)).toList(),
+            padding: MediaQuery.of(context).size.width > 1000 ?const EdgeInsets.all(6.0):const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: solution.map((number) => _buildColorCircle(_getColor(number), isSecret: true)).toList()
+                ),
+                Text("Secret code",style: TextStyle(color: Colors.blue, fontSize: MediaQuery.of(context).size.width>1000?20:15))],
             ),
           ),
           Expanded(
@@ -675,7 +680,7 @@ class _MastermindGameState extends State<MastermindGame> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: currentGuess.map((number) => _buildColorCircle(_getColor(number))).toList(),
                             ),
-                            Text("${hint[0]} black, ${hint[1]} white", style: TextStyle(color: Colors.blue)),
+                            Text("${hint[0]} black, ${hint[1]} white", style: TextStyle(color: Colors.blue, fontSize: MediaQuery.of(context).size.width>1000?20:15)),
                             SizedBox(height: 10)
                           ],
                         );
@@ -695,14 +700,24 @@ class _MastermindGameState extends State<MastermindGame> {
 
           Container(
             margin:(const EdgeInsets.fromLTRB(5, 3, 5, 200)),
-            child:ElevatedButton(
-            onPressed: resetGame,
-            child: Icon(Icons.refresh,color: Colors.white,size: 50,),
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
-              padding: MaterialStateProperty.all<EdgeInsetsGeometry>(const EdgeInsets.all(10)),
+            child:Padding(
+              padding: const EdgeInsets.all(3.0),
+              child: Column(
+                children: [Padding(
+                  padding: const EdgeInsets.fromLTRB(4,4,4,4),
+                  child: Text("Number of Guesses: ${itemsToShow}",style: TextStyle(color: Colors.blue, fontSize: MediaQuery.of(context).size.width>1000?20:15,fontWeight: FontWeight.w600)),
+                ),
+                  ElevatedButton(
+                  onPressed: resetGame,
+                  child: Icon(Icons.refresh,color: Colors.white,size: 50,),
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+                    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(const EdgeInsets.all(10)),
+                  ),
+                            ),
+                ],
+              ),
             ),
-          ),
           ),
         ],
       ),

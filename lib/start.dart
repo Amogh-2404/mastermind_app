@@ -26,11 +26,14 @@ class StartDart {
     List<List<List<int>>> guessList = [[gameHelper.hint(temp, newGameData.secretCode, newGameData.codeLength, newGameData.numColors), temp]];
     var countHypermutation  = 0;
 
+    var countHyperMutation = 0;
     for (int generation = 0; generation < newGameData.numGenerations; generation++) {
-      if (countHypermutation == 15) {
+
+      if (countHyperMutation == 15) {
         population = List.generate(
             newGameData.populationSize, (_) => gameHelper.generateRandomCode(newGameData.numColors, newGameData.codeLength));
-        countHypermutation = 0;
+        countHyperMutation = 0;
+
       }
 
 
@@ -60,11 +63,13 @@ class StartDart {
         var newGuess = List<int>.from(populationWithFitness.first[1]);
         var newHint = gameHelper.hint(newGuess, newGameData.secretCode, newGameData.codeLength, newGameData.numColors);
         guessList.add([newHint, newGuess]);
+
         countHypermutation = 0;
       }
       else{
         countHypermutation++;
       }
+
 
       if (gameHelper.hint(guessList.last.last, newGameData.secretCode, newGameData.codeLength, newGameData.numColors)[0] == newGameData.codeLength) {
         break;

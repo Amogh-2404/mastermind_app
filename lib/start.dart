@@ -12,9 +12,10 @@ class StartDart {
     required int codeLength,
     required int populationSize,
     required int numGenerations,
+    required List<int> secretCode,
   }) {
     gameHelper = GameHelper();
-    List<int> secretCode = gameHelper.generateRandomCode(numColors, codeLength);
+    // List<int> secretCode = gameHelper.generateRandomCode(numColors, codeLength);
     newGameData = GameData(numColors, populationSize, codeLength, secretCode, numGenerations, 0.1);
   }
 
@@ -23,23 +24,34 @@ class StartDart {
         newGameData.populationSize, (_) => gameHelper.generateRandomCode(newGameData.numColors, newGameData.codeLength));
     List<int> temp = gameHelper.generateRandomCode(newGameData.numColors, newGameData.codeLength);
     List<List<List<int>>> guessList = [[gameHelper.hint(temp, newGameData.secretCode, newGameData.codeLength, newGameData.numColors), temp]];
+    var countHypermutation  = 0;
 
     var countHyperMutation = 0;
     for (int generation = 0; generation < newGameData.numGenerations; generation++) {
+
       if (countHyperMutation == 15) {
         population = List.generate(
             newGameData.populationSize, (_) => gameHelper.generateRandomCode(newGameData.numColors, newGameData.codeLength));
         countHyperMutation = 0;
+
       }
+
 
       List<int> fitnessList = [];
       for (var individual in population) {
-        int totalDist = guessList.fold(0, (sum, guess) {
-          var h = gameHelper.hint(individual, guess.last, newGameData.codeLength, newGameData.numColors);
-          var hi = gameHelper.hint(guess.last, newGameData.secretCode, newGameData.codeLength, newGameData.numColors);
-          return sum + gameHelper.distance(h, hi);
-        });
-        fitnessList.add(gameHelper.calculateFitness(totalDist));
+        var totalDistance = 0;
+        for (var g in guessList){
+          var h = gameHelper.hint(individual, g.last, newGameData.codeLength, newGameData.numColors);
+          var h_i = gameHelper.hint(g.last, newGameData.secretCode, newGameData.codeLength, newGameData.numColors);
+          totalDistance += gameHelper.distance(h, h_i);
+        }
+        fitnessList.add(gameHelper.calculateFitness(totalDistance));
+        // int totalDist = guessList.fold(0, (sum, guess) {
+        //   var h = gameHelper.hint(individual, guess.last, newGameData.codeLength, newGameData.numColors);
+        //   var hi = gameHelper.hint(guess.last, newGameData.secretCode, newGameData.codeLength, newGameData.numColors);
+        //   return sum + gameHelper.distance(h, hi);
+        // });
+        // fitnessList.add(gameHelper.calculateFitness(totalDist));
       }
 
       await Future.delayed(Duration.zero);
@@ -51,8 +63,13 @@ class StartDart {
         var newGuess = List<int>.from(populationWithFitness.first[1]);
         var newHint = gameHelper.hint(newGuess, newGameData.secretCode, newGameData.codeLength, newGameData.numColors);
         guessList.add([newHint, newGuess]);
-        countHyperMutation = 0;
-      }else{countHyperMutation+=1;}
+
+        countHypermutation = 0;
+      }
+      else{
+        countHypermutation++;
+      }
+
 
       if (gameHelper.hint(guessList.last.last, newGameData.secretCode, newGameData.codeLength, newGameData.numColors)[0] == newGameData.codeLength) {
         break;
@@ -64,30 +81,33 @@ class StartDart {
 
       // Evolutionary operations: transposition, crossover, and mutation
       final random = Random();
-      int half = population.length ~/ 2;
+      var half = population.length ~/ 2;
       population = population.sublist(half);
-
-      int transpositionSize = population.length ~/ 5;
-      int crossoverSize = (transpositionSize * 2) ~/ 5;
-      int mutateSize = population.length - (transpositionSize + crossoverSize);
+      // Changed all int to vars
+      var transpositionSize = population.length ~/ 5;
+      var crossoverSize = (transpositionSize * 2) ~/ 5;
+      var mutateSize = population.length - (transpositionSize + crossoverSize);
 
       Set<List<int>> transpositionPopulation = {};
-      while (transpositionPopulation.length < transpositionSize) {
+      while (transpositionPopulation.length != transpositionSize) {
         var randomIndex = random.nextInt(population.length);
         transpositionPopulation.add(population[randomIndex]);
       }
+      // print("Transposition Set: ${transpositionPopulation.length}");
 
       Set<List<int>> crossoverPopulation = {};
-      while (crossoverPopulation.length < crossoverSize) {
+      while (crossoverPopulation.length !=  crossoverSize) {
         var randomIndex = random.nextInt(population.length);
         crossoverPopulation.add(population[randomIndex]);
       }
+      // print("CrossOver Set: ${crossoverPopulation.length}");
 
       Set<List<int>> mutatePopulation = {};
-      while (mutatePopulation.length < mutateSize) {
+      while (mutatePopulation.length != mutateSize) {
         var randomIndex = random.nextInt(population.length);
         mutatePopulation.add(population[randomIndex]);
       }
+      // print("Mutation Set: ${mutatePopulation.length}");
 
       List<List<int>> transpositionPopulationList = transpositionPopulation.map((e) => gameHelper.transpose(e)).toList();
       List<List<int>> crossoverPopulationList = [];
@@ -112,6 +132,7 @@ class StartDart {
     }
 
     await Future.delayed(Duration(seconds: 1), () => print('Finished'));
+    print("The answer to all your problems: ${guessList}");
     return guessList;
   }
 }

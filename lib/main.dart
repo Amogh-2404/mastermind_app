@@ -348,8 +348,10 @@
 //
 
 import 'dart:async';
+import 'dart:html';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'start.dart';
 import 'package:zoom_widget/zoom_widget.dart';
 import 'menu_drawer.dart';
@@ -395,17 +397,58 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 }
 
+enum ColorChoice {red, green, blue, yellow, purple, orange, cyan, pink, teal, indigo}
+
 class SettingsScreen extends StatefulWidget {
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
 }
 
+//Colors.red, Colors.green, Colors.blue, Colors.yellow, Colors.purple, Colors.orange, Colors.cyan, Colors.pink, Colors.teal, Colors.indigo
+
+Map<ColorChoice, Color> globalColorMap = {
+  ColorChoice.red: Colors.red,
+  ColorChoice.green: Colors.green,
+  ColorChoice.blue: Colors.blue,
+  ColorChoice.yellow: Colors.yellow,
+  ColorChoice.purple: Colors.purple,
+  ColorChoice.orange: Colors.orange,
+  ColorChoice.cyan: Colors.cyan,
+  ColorChoice.pink: Colors.pink,
+  ColorChoice.teal: Colors.teal,
+  ColorChoice.indigo: Colors.indigo,
+};
 class _SettingsScreenState extends State<SettingsScreen> {
   final _formKey = GlobalKey<FormState>();
   int numColors = 6;
   int codeLength = 4;
-  int populationSize = 100;
-  int numGenerations = 500;
+  int populationSize = 10;
+  int numGenerations = 5000;
+  List<ColorChoice?> selectedColors = [];
+  ColorChoice? selectedColor;
+  late Map<ColorChoice, Color> colorMapReduced;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedColors = List<ColorChoice?>.filled(codeLength, null);
+    colorMapReduced = Map.fromEntries(globalColorMap.entries.take(6));
+  }
+
+  Map<ColorChoice, Color> colorMap = {
+    ColorChoice.red: Colors.red,
+    ColorChoice.green: Colors.green,
+    ColorChoice.blue: Colors.blue,
+    ColorChoice.yellow: Colors.yellow,
+    ColorChoice.purple: Colors.purple,
+    ColorChoice.orange: Colors.orange,
+    ColorChoice.cyan: Colors.cyan,
+    ColorChoice.pink: Colors.pink,
+    ColorChoice.teal: Colors.teal,
+    ColorChoice.indigo: Colors.indigo,
+  };
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -439,7 +482,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       initialValue: numColors.toString(),
       keyboardType: TextInputType.number,
-      onSaved: (value) => numColors = int.parse(value ?? '6'),
+      onSaved: (value){
+        numColors = int.parse(value ?? '6');
+        setState(() {
+          colorMapReduced = Map.fromEntries(colorMap.entries.take(numColors));
+        });
+        },
+        onChanged: (value){
+          numColors = int.parse(value ?? '6');
+          setState(() {
+            colorMapReduced = Map.fromEntries(colorMap.entries.take(numColors));
+          });
+        },
 
 
       ),
@@ -465,7 +519,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
          ),
       initialValue: codeLength.toString(),
       keyboardType: TextInputType.number,
-      onSaved: (value) => codeLength = int.parse(value ?? '4'),
+        onChanged: (value) {
+          int newCodeLength = int.tryParse(value) ?? codeLength;
+          if (newCodeLength != codeLength) {
+            setState(() {
+              codeLength = newCodeLength;
+              selectedColors = List<ColorChoice?>.filled(codeLength, null);
+            });
+          }
+        },
+        onSaved: (value) {
+          int newCodeLength = int.parse(value ?? '4');
+          setState(() {
+            codeLength = newCodeLength;
+          });
+        },
       ),
     ),
     Container(
@@ -489,7 +557,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
          ),
       initialValue: populationSize.toString(),
         keyboardType: TextInputType.number,
-        onSaved: (value) => populationSize = int.parse(value ?? '100'),
+        onSaved: (value){
+        setState(() {
+          populationSize = int.parse(value ?? '10');
+        });
+      },
+        onChanged:(value) {
+          setState(() {
+            populationSize = int.parse(value ?? '10');
+          });
+        },
       ),
     ),
       Container(
@@ -513,8 +590,60 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           initialValue: numGenerations.toString(),
           keyboardType: TextInputType.number,
-          onSaved: (value) => numGenerations = int.parse(value ?? '500'),
+          onSaved: (value) => numGenerations = int.parse(value ?? '5000'),
         ),
+      ),
+      Center(
+        child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child:Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Wrap(
+              spacing: 8.0,
+
+              children: colorMapReduced.keys.map((color) {
+                return GestureDetector(
+                  onTap: () => setState(() {
+                    selectedColor = color;
+                  }),
+                  child: Container(
+                    width: 30,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      color: colorMap[color],
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
+        )
+            ),
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: selectedColors.asMap().entries.map((entry) {
+          return GestureDetector(
+            onTap: () {setState(() {
+              if (selectedColor != null) {
+                // print("HELL YEAH!!!!");
+                print("The secret color is ${selectedColor}");
+                selectedColors[entry.key] = selectedColor;
+              }
+            });},
+            child: Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                color: entry.value == null ? Colors.grey : colorMap[entry.value],
+                shape: BoxShape.circle,
+              ),
+              margin: EdgeInsets.all(4),
+            ),
+          );
+        }).toList(),
       ),
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 20.0),
@@ -529,6 +658,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onPressed: () {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
+                // print(selectedColors);
+                if (selectedColors.any((color) => color == null)) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Please fill all the slots with colors."),
+                    ),
+                  );
+                  return;
+                }
+                List<int> secretCode = selectedColors.map((color) => colorMap.keys.toList().indexOf(color!)).toList();
+                // print(secretCode);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -537,6 +677,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       codeLength: codeLength,
                       populationSize: populationSize,
                       numGenerations: numGenerations,
+                      secretCode: secretCode,
                     ),
                   ),
                 );
@@ -559,6 +700,7 @@ class MastermindGame extends StatefulWidget {
   final int codeLength;
   final int populationSize;
   final int numGenerations;
+  final List<int> secretCode;
 
   const MastermindGame({
     Key? key,
@@ -566,6 +708,7 @@ class MastermindGame extends StatefulWidget {
     required this.codeLength,
     required this.populationSize,
     required this.numGenerations,
+    required this.secretCode,
   }) : super(key: key);
 
   @override
@@ -586,12 +729,13 @@ class _MastermindGameState extends State<MastermindGame> {
       codeLength: widget.codeLength,
       populationSize: widget.populationSize,
       numGenerations: widget.numGenerations,
+      secretCode: widget.secretCode,
     );
     simulatedGuesses = startDart.geneticAlgorithm().whenComplete(() {
       setState(() {
         isLoading = false;
         solution = startDart.newGameData.secretCode;
-        print(solution);
+        // print(solution);
       });
     });
 
@@ -610,7 +754,7 @@ class _MastermindGameState extends State<MastermindGame> {
 
   Color _getColor(int number) {
     List<Color> colors = [Colors.red, Colors.green, Colors.blue, Colors.yellow, Colors.purple, Colors.orange, Colors.cyan, Colors.pink, Colors.teal, Colors.indigo];
-    return colors[(number - 1) % colors.length];
+    return colors[(number) % colors.length];
   }
 
   Widget _buildColorCircle(Color color, {bool isSecret = false}) {

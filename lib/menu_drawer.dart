@@ -24,16 +24,19 @@ class MenuDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: Icon(Icons.scatter_plot_sharp,color: Theme.of(context).appBarTheme.backgroundColor),
-            title: Text('Statistics',style: TextStyle(color: Theme.of(context).appBarTheme.backgroundColor),),
+            leading: Icon(Icons.scatter_plot_sharp,
+                color: Theme.of(context).appBarTheme.backgroundColor),
+            title: Text(
+              'Statistics',
+              style: TextStyle(
+                  color: Theme.of(context).appBarTheme.backgroundColor),
+            ),
             hoverColor: Theme.of(context).hoverColor,
-
             onTap: () {
               Navigator.pop(context); // Close the drawer
               // Additional actions can be added here for navigation
             },
           ),
-
         ],
       ),
     );

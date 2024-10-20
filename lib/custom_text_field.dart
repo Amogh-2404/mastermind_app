@@ -9,7 +9,7 @@ class MyCustomTextField extends StatelessWidget {
     return  Theme(
       data: Theme.of(context).copyWith(
         textTheme: const TextTheme(
-          subtitle1: TextStyle(
+          titleMedium: TextStyle(
             color: Colors.blue, // Color for the input text and label when it is floating (after focus)
           ),
         ),

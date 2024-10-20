@@ -8,7 +8,8 @@ class GameHelper {
     return List<int>.generate(codeLength, (_) => random.nextInt(numColors) + 1);
   }
 
-  List<int> hint(List<int> code, List<int> secretCode, int codeLength, int numColors) {
+  List<int> hint(
+      List<int> code, List<int> secretCode, int codeLength, int numColors) {
     int blackPegs = 0;
     int whitePegs = 0;
     for (int i = 0; i < codeLength; i++) {
@@ -26,15 +27,16 @@ class GameHelper {
   }
 
   int distance(List<int> pegList1, List<int> pegList2) {
-    return (pegList1[0] - pegList2[0]).abs() + (pegList1[1] - pegList2[1]).abs();
+    return (pegList1[0] - pegList2[0]).abs() +
+        (pegList1[1] - pegList2[1]).abs();
   }
 
   int calculateFitness(int totalDist) {
     return -totalDist;
   }
 
-
-  List<int> mutate(List<int> code, double mutationRate, int codeLength, int numColors) {
+  List<int> mutate(
+      List<int> code, double mutationRate, int codeLength, int numColors) {
     if (random.nextDouble() < mutationRate) {
       int mutationPoint = random.nextInt(codeLength);
       code[mutationPoint] = random.nextInt(numColors) + 1;
@@ -47,11 +49,11 @@ class GameHelper {
     List<int> newCode = List.from(code);
     int tcIndex = random.nextInt(newCode.length);
     int transposedColor = newCode.removeAt(tcIndex);
-    int insertionPoint = random.nextInt(newCode.length + 1);  // +1 because we can insert at the end
+    int insertionPoint = random
+        .nextInt(newCode.length + 1); // +1 because we can insert at the end
     newCode.insert(insertionPoint, transposedColor);
     return newCode;
   }
-
 
   List<T> circularMutate<T>(List<T> code) {
     if (code.isEmpty) return code;
@@ -60,7 +62,6 @@ class GameHelper {
     newCode.addAll(code.sublist(0, code.length - 1));
     return newCode;
   }
-
 
   List<List<T>> selectParents<T>(List<List<T>> populationWithFitness) {
     final Random random = Random();
@@ -80,6 +81,4 @@ class GameHelper {
     List<T> offspring2 = parent2.sublist(0, point) + parent1.sublist(point);
     return [offspring1, offspring2];
   }
-
-
 }
